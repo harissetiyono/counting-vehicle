@@ -5,6 +5,7 @@ import LiveStream from "@/pages/LiveStream.vue";
 import LiveDetail from "@/pages/LiveDetail.vue";
 import Camera from "@/pages/Camera.vue";
 import AddCamera from "@/pages/AddCamera.vue";
+import Statistics from "@/pages/Statistics.vue";
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
         component: AddCamera
       },
       {
+        path: "camera/:id/edit",
+        name: "Edit Camera",
+        component: AddCamera
+      },
+      {
         path: "livestream",
         name: "Live Stream",
         component: LiveStream
@@ -36,6 +42,11 @@ const routes = [
         path: "live/:id",
         name: "Live Stream",
         component: LiveDetail
+      },
+      {
+        path: "statistics",
+        name: "Statistics Report",
+        component: Statistics
       },
     ]
   }

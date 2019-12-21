@@ -1,21 +1,5 @@
 <template>
 <v-row>
-  <v-col
-      cols="12"
-      md="8"
-    >
-      <v-select
-        class="mb-n10"
-        v-model="cameras"
-        :items="camera_list"
-        item-value="id"
-        item-text="name"
-        @change="changeRoute"
-        dense
-        solo
-        label="Camera Active"
-      ></v-select>
-  </v-col>
     <v-col
       cols="12"
       md="8"
@@ -275,10 +259,15 @@ import VueApexCharts from 'vue-apexcharts'
     }),
 
     created () {
+      this.$Progress.start()
       this.traffic()
       this.pie()
       this.traffic_weekly()
       this.heatmap()
+    },
+
+    mounted(){
+      this.$Progress.finish()
     },
 
     computed: {
@@ -287,7 +276,7 @@ import VueApexCharts from 'vue-apexcharts'
     methods: {
       async initialize(){
         try {
-            const { data } = await this.axios.get('http://127.0.0.1:8001/camera/')
+            const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera/')
             this.cameras = data
           } catch (error) {
               window.console.log(Object.keys(error), error.message);
@@ -297,7 +286,7 @@ import VueApexCharts from 'vue-apexcharts'
       async traffic(){
         const self = this
         try {
-          const { data } = await this.axios.get('http://127.0.0.1:8001/trend?start_date=&end_date=&lane=all')
+          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + 'trend?start_date=&end_date=&lane=all')
           data.datasets.forEach((value, index) => {
             Object.keys(value.data).forEach((hour) => {
               var index_hour = self.hours.indexOf(hour);
@@ -318,7 +307,7 @@ import VueApexCharts from 'vue-apexcharts'
 
       async pie(){
         try {
-          const { data } = await this.axios.get('http://127.0.0.1:8001/pie?start_date=&end_date=&lane=all')
+          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/pie?start_date=&end_date=&lane=all')
           this.seriesPie = data.datasets
         } catch (error) {
           window.console.log(error)
@@ -327,7 +316,7 @@ import VueApexCharts from 'vue-apexcharts'
 
       async heatmap(){
         try {
-          const { data } = await this.axios.get('http://127.0.0.1:8001/heatmap')
+          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/heatmap')
           this.seriesHeatmap = data.datasets
           this.chartOptionsHeatmap = {
             xaxis : {
@@ -342,7 +331,8 @@ import VueApexCharts from 'vue-apexcharts'
 
       async traffic_weekly(){
         try {
-          const { data } = await this.axios.get('http://127.0.0.1:8001/weekly/trend')
+          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + 
+          '/weekly/trend')
           this.seriesWeekly = data.datasets
           this.chartOptionsBar = {
             xaxis : {

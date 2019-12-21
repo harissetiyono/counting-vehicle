@@ -3,6 +3,11 @@ var http = require('http').createServer(app);
 var bodyParser = require('body-parser')
 var io = require('socket.io')(http);
 
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
+const dir_tensorflow = '/Users/haris/Development/alpr/research'
+
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -24,7 +29,6 @@ io.on('connect', function (socket) {
       io.to(request.body['id_camera']).emit('counting_live', request.body);
       response.send(request.body);    // echo the result back
   });
-
 });
 
 http.listen(3000, function(){

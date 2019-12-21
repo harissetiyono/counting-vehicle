@@ -1,19 +1,13 @@
 <template>
     <v-container fluid grid-list-md>
       <v-layout wrap>
-        <v-flex d-flex xs12 sm6 md3 v-for="item of cameras" :key="item.id_cctv">
-          <v-card class="mx-auto" width="300">
-            <div v-if="item.streamStatus">
-              <v-img :src="item.stream"/>
-            </div>
-            <div v-else>
-              <v-img src="@/assets/offline.jpg"/>
-            </div>
-            <v-img slot="error" src="@/assets/offline.jpg" aspect-ratio="1.7"/>
-            <!-- <vue-load-image>
-              <img slot="image" :src="'http://localhost:'+item.port+'/stream.mjpg'" style="max-width:276px;"/>
-              <img slot="preloader" src="@/assets/loading.gif"/>
-            </vue-load-image> -->
+        <v-flex class="pb-4" d-flex xs12 sm4 md3 v-for="item of cameras" :key="item.id_cctv">
+          <v-card width="300">
+            <vue-load-image>
+              <img slot="image" :src="'http://' + item.ip_local +':'+ item.port+ '/' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) +'/stream.mjpg'" style="width: 100%"/>
+              <v-img slot="preloader" src="@/assets/preloader.gif"/>
+              <v-img slot="error" src="@/assets/offline.jpg" aspect-ratio="1.7"/>
+            </vue-load-image>
               <v-card-actions>
                 <v-spacer></v-spacer>
                     <v-btn :to="'/live/'+item.id">
@@ -30,16 +24,23 @@
           </v-card>
         </v-flex>
       </v-layout>
+        <div class="text-center">
+          <v-pagination
+            v-model="page"
+            :length="length"
+            circle
+          ></v-pagination>
+        </div>
     </v-container>
 
 </template>
 
 <script>
-// import VueLoadImage from 'vue-load-image'
+import VueLoadImage from 'vue-load-image'
   export default {
-    // components: {
-    //   'vue-load-image': VueLoadImage
-    // },
+    components: {
+      'vue-load-image': VueLoadImage
+    },
     props: {
       source: String,
     },
@@ -47,25 +48,37 @@
       cameras:[],
       imageDefault: '/storage/default/loading.gif',
       imageError: '/storage/default/image-404.png',
-      video: ''
+      page: 1,
+      length : null,
     }),
 
     created () {
+      this.$Progress.start()
       this.initialize()
+      this.$Progress.finish()
+    },
+
+    watch :{
+      page(){
+        this.$Progress.start()
+        this.initialize()
+        this.$Progress.finish()
+      }
     },
 
     methods: {
       async initialize () {
         let _self = this
-        const { data } = await this.axios.get('http://127.0.0.1:8001/camera')
-        this.cameras = data
+        const { data } = await this.axios.get('http://127.0.0.1:8001/camera?page=' + this.page)
+        this.cameras = data.data
+        this.length = data.last_page
 
         data.forEach((element, i) => {
           this.axios.get('http://localhost:' + element.port).then(function(){
             _self.cameras[i].status = 1
-            let random = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-            _self.cameras[i].stream = 'http://localhost:' + element.port + '/' + random + '/stream.mjpg'
-            _self.cameras[i].streamStatus = true
+            // let random = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+            // _self.cameras[i].stream = 'http://localhost:' + element.port + '/' + random + '/stream.mjpg'
+            // _self.cameras[i].streamStatus = true
           }).catch(function(error){
               if (!error.response) {
                 // network error

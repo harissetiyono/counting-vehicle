@@ -4,53 +4,107 @@ namespace App\Http\Controllers;
 
 use App\Camera;
 use App\Lane;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class CameraController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $camera = Camera::all();
+        $page = $request->get('page');
+        if($page){
+          $camera = Camera::paginate(8);
+        }else{
+          $camera = Camera::all();
+        }
+        
         return response()->json($camera, 200);
     }
 
     public function store(Request $request)
     {
         $datas = $request->all();
-        $lane_point = $datas['line_path']['point'];
-        $lane_path = $datas['line_path']['path'];
-
-        $x_start_line = $lane_point[0];
-        $y_start_line = $lane_point[1];
-        $x_end_line = $lane_point[2];
-        $y_end_line = $lane_point[3];
-
         try {
           $id = Camera::create($datas['camera_data'])->id;
+          foreach ($datas['line_path'] as $key => $value) {
+            $data = new Lane;
+            $data->id_camera = $id;
+            $data->path_line = $value['path'];
+            $data->x_start_line = $value['point'][0]*2;
+            $data->y_start_line = $value['point'][1]*2;
+            $data->x_end_line = $value['point'][2]*2;
+            $data->y_end_line = $value['point'][3]*2;
+            $data->save();
 
-          $data = new Lane;
-          $data->id_camera = $id;
-          $data->path_line = $lane_path;
-          $data->x_start_line = $x_start_line;
-          $data->y_start_line = $y_start_line;
-          $data->x_end_line = $x_end_line;
-          $data->y_end_line = $y_end_line;
-          $data->y_end_line = $y_end_line;
-         
-          if ($data->save()) {
-            return response()->json(array('success' => true), 200);
+            if ($value['path'] == 'IN') {
+              $line_array['in'][] = [$value['point'][0]*2,$value['point'][1]*2,$value['point'][2]*2,$value['point'][3]*2 ];
+            }else{
+              $line_array['out'][] = [$value['point'][0]*2,$value['point'][1]*2,$value['point'][2]*2,$value['point'][3]*2];
+            }
+
           }
+
+          if(Storage::exists('public/line_json/'.$datas['camera_data']['port'])) {
+            Storage::deleteDirectory('public/line_json/'.$datas['camera_data']['port']);
+          }
+
+          Storage::makeDirectory('public/line_json/'.$datas['camera_data']['port']);
+
+          foreach ($line_array as $key => $value) {
+            $this->generateLine(json_encode($value), $datas['camera_data']['port'], $key);
+          }
+
+          return response()->json(array('success' => true), 200);
         } catch (\Throwable $th) {
-            return response()->json(array('success' => false, 'message' => $th), 200);
+          return response()->json(array('success' => false, 'message' => $th), 500);
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-      $camera = Camera::findOrfail($id);
-      $camera->update($request->all());
+      $datas = $request->all();
+      $id = $datas['camera_data']['id'];
+        try {
+          $camera = Camera::findOrfail($id);
+          $camera->update($datas['camera_data']);
+
+          $deletedRows = Lane::where('id_camera', $id)->delete();
+
+          foreach ($datas['line_path'] as $key => $value) {
+            $data = new Lane;
+            $data->id_camera = $id;
+            $data->path_line = $value['path'];
+            $data->x_start_line = $value['point'][0]*2;
+            $data->y_start_line = $value['point'][1]*2;
+            $data->x_end_line = $value['point'][2]*2;
+            $data->y_end_line = $value['point'][3]*2;
+            $data->save();
+
+            if ($value['path'] == 'IN') {
+              $line_array['in'][] = [$value['point'][0]*2,$value['point'][1]*2,$value['point'][2]*2,$value['point'][3]*2 ];
+            }else{
+              $line_array['out'][] = [$value['point'][0]*2,$value['point'][1]*2,$value['point'][2]*2,$value['point'][3]*2];
+            }
+
+          }
+
+          if(Storage::exists('public/line_json/'.$datas['camera_data']['port'])) {
+            Storage::deleteDirectory('public/line_json/'.$datas['camera_data']['port']);
+          }
+
+          Storage::makeDirectory('public/line_json/'.$datas['camera_data']['port']);
+
+          foreach ($line_array as $key => $value) {
+            $this->generateLine(json_encode($value), $datas['camera_data']['port'], $key);
+          }
+
+          return response()->json(array('success' => true), 200);
+        } catch (\Throwable $th) {
+          return response()->json(array('success' => false, 'message' => $th), 500);
+        }
 
       return $camera;
     }
@@ -67,8 +121,30 @@ class CameraController extends Controller
 
     public function camera($id)
     {
-      $camera = Camera::where('id', $id)->get();
+      $camera = Camera::where('id', $id)->first();
       return response()->json($camera, 200);
+    }
+
+    public function lines($id)
+    {
+      $lines = Lane::where('id_camera', $id)->get();
+
+      foreach ($lines as $key => $value) {
+        $lines_point[$key]['x'] = 0;
+        $lines_point[$key]['y'] = 0;
+        $lines_point[$key]['point'] = [$value['x_start_line']/2,$value['y_start_line']/2,$value['x_end_line']/2,$value['y_end_line']/2];
+        $lines_point[$key]['closed'] = true;
+        $lines_point[$key]['stroke'] = '#00a1ff';
+        $lines_point[$key]['path'] = $value['path_line'];
+      }
+      return response()->json($lines_point, 200);
+    }
+
+    public function generateLine($json_line,$port, $path)
+    {
+      $process = new Process(['python', env('PATH_GENERATE_LINE'),$json_line,$port,$path,env('PATH_LOCATION_LINE')]);
+      $process->run();
+      return $process->getOutput();
     }
 
     public function generateImage(Request $request)
@@ -94,7 +170,7 @@ class CameraController extends Controller
     public function runService(Request $request)
     {
       $id = $request->post('id');
-      exec('cd /Users/haris/Development/alpr/research && protoc object_detection/protos/*.proto --python_out=. && export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim && nohup python3 /Users/haris/Development/alpr/research/object_detection/start.py -i '. $id .' 2>/dev/null >/dev/null &');
+      exec('cd /Users/haris/Development/alpr/research && protoc object_detection/protos/*.proto --python_out=. && export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim && cd object_detection && python3 start.py -i '. $id .' 2>/dev/null >/dev/null &');
 
       // $test = exec('python3 /Users/haris/Development/alpr/research/object_detection/start.py -i 1 > /dev/null 2>&1 &');
       return response()->json(200, ['message' => 'Success']);
