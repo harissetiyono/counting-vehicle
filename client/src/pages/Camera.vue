@@ -115,12 +115,13 @@
           align: 'left',
           sortable: false,
           value: 'name',
+          width: 150
         },
-        { text: 'Lokasi', value: 'location' },
+        { text: 'Lokasi', value: 'location'},
         { text: 'Port', value: 'port' },
-        { text: 'Ip Stream', value: 'ip_stream' },
+        // { text: 'Ip Stream', value: 'ip_stream' },
         { text: 'Status', value: 'status' },
-        { text: 'Actions', value: 'action', width: 180, sortable: false },
+        { text: 'Actions', value: 'action', sortable: false },
       ],
       cameras: [],
       status : [
@@ -145,7 +146,7 @@
           this.cameras = data
 
           data.forEach((element, i) => {
-            this.axios.get( element.ip_local +':' + element.port).then(function(){
+            this.axios.get('http://' + element.ip_local +':' + element.port).then(function(){
               _self.cameras[i].status = 1
             }).catch(function(error){
                 if (!error.response) {
@@ -208,7 +209,7 @@
 
       stopCamera(port){
         let self = this
-        this.axios.post(process.env.VUE_APP_IP_SERVER + ':' + port + '/stop', { action : 'stop' }).then(function(){
+        this.axios.post('http://localhost' + ':' + port + '/stop', { action : 'stop' }).then(function(){
           self.$notify({
             group: 'foo',
             type: 'success',

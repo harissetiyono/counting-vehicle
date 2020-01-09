@@ -12,12 +12,12 @@
                 <v-spacer></v-spacer>
                     <v-btn :to="'/live/'+item.id">
                       {{ item.name + ' ' }}
-                      <div v-if="item.status == 1">
+                      <!-- <div v-if="item.status == 1">
                         <v-icon class="pl-2" color="green" left >mdi-brightness-1</v-icon>
                       </div>
                       <div v-else>
                         <v-icon class="pl-2" color="red" left >mdi-brightness-1</v-icon>
-                      </div>
+                      </div> -->
                     </v-btn>
                 <v-spacer></v-spacer>
               </v-card-actions>
@@ -74,7 +74,7 @@ import VueLoadImage from 'vue-load-image'
         this.length = data.last_page
 
         data.forEach((element, i) => {
-          this.axios.get('http://localhost:' + element.port).then(function(){
+          this.axios.get('http://127.0.0.1:' + element.port).then(function(){
             _self.cameras[i].status = 1
             // let random = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             // _self.cameras[i].stream = 'http://localhost:' + element.port + '/' + random + '/stream.mjpg'

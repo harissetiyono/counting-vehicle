@@ -11,6 +11,9 @@
 |
 */
 
+use App\Profession;
+use App\Religion;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -36,3 +39,26 @@ Route::get('/heatmap', 'CountingController@heatmap');
 Route::get('/heatmap_range', 'CountingController@heatmap_range');
 
 Route::get('/realtime/count/{id}', 'CountingController@liveCount');
+
+//face recognition
+// Route::get('/person', 'PersonController@index');
+// Route::get('/person/{id}', 'PersonController@show');
+// Route::get('/person/{id}/edit', 'PersonController@edit');
+// Route::post('/person', 'PersonController@store');
+// Route::put('/person/{id}', 'PersonController@update');
+Route::resource('person', 'PersonController');
+Route::get('/get_face/{id}', 'PersonController@getFacePhoto');
+Route::get('/train', 'PersonController@runTrain');
+
+Route::post('/find_face', 'PersonController@findByPhoto');
+
+Route::get('/profession', function () {
+    $profession = Profession::all();
+    return $profession;
+});
+
+Route::get('/religion', function () {
+    $religion = Religion::all();
+    return $religion;
+});
+

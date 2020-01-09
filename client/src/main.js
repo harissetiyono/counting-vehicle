@@ -40,7 +40,7 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 Vue.use(new VueSocketIO({
   debug: false,
-  connection: 'http://localhost:3000',
+  connection: 'http://127.0.0.1:3000',
 }))
 
 Vue.use(VueProgressBar, {

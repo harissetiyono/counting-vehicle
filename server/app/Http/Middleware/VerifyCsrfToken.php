@@ -19,6 +19,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        'run','camera', 'generate'
+        'run','camera', 'generate', 'person/*', 'person', 'find_face'
     ];
 }
