@@ -16,6 +16,12 @@ import PersonData from "@/pages/face_recognition/PersonData.vue";
 import PersonForm from "@/pages/face_recognition/PersonForm.vue";
 import FaceFind from "@/pages/face_recognition/FaceFind.vue";
 
+import ANPRStream from "@/pages/anpr/ANPRStream.vue";
+import ANPRStreamDetail from "@/pages/anpr/ANPRStreamDetail.vue";
+import ANPRCamera from "@/pages/anpr/ANPRCamera.vue";
+import ANPRData from "@/pages/anpr/ANPRData.vue";
+import ANPRFiltering from "@/pages/anpr/ANPRFiltering.vue";
+
 const routes = [
   {
     path: "/",
@@ -25,89 +31,204 @@ const routes = [
       {
         path: "dashboard",
         name: "Dashboard",
-        component: Dashboard
+        component: Dashboard,
+        meta: {
+          auth: true,
+          title: 'Counting Dashboard'
+        }
       },
       {
         path: "camera",
         name: "Camera",
-        component: Camera
+        component: Camera,
+        meta: {
+          auth: true,
+          title: 'Counting Cameras'
+        }
       },
       {
         path: "camera/add",
         name: "Add Camera",
-        component: AddCamera
+        component: AddCamera,
+        meta: {
+          auth: true,
+          title: 'Add Camera Counting'
+        }
       },
       {
         path: "camera/:id/edit",
         name: "Edit Camera",
-        component: AddCamera
+        component: AddCamera,
+        meta: {
+          auth: true,
+          title: 'Edit Camera Counting'
+        }
       },
       {
         path: "livestream",
         name: "Live Stream",
-        component: LiveStream
+        component: LiveStream,
+        meta: {
+          auth: true,
+          title: 'Counting Live Stream'
+        }
       },
       {
-        path: "live/:id",
-        name: "Live Stream",
-        component: LiveDetail
+        path: ":id/live",
+        name: "Live Stream Detail",
+        component: LiveDetail,
+        meta: {
+          auth: true,
+          title: 'Counting Detail'
+        }
       },
       {
         path: "statistics",
         name: "Statistics Report",
-        component: Statistics
+        component: Statistics,
+        meta: {
+          auth: true,
+          title: 'Counting Statistics'
+        }
       },
 
       // Face Recognition
       {
         path: "face_recognition/dashboard",
         name: "Face Dashboard",
-        component: FaceDashboard
+        component: FaceDashboard,
+        meta: {
+          auth: true,
+          title: 'Face Recognition Dashboard'
+        }
       },
       {
         path: "face_recognition/person",
         name: "Person Data",
-        component: PersonData
+        component: PersonData,
+        meta: {
+          auth: true,
+          title: 'Add Person Data'
+        }
       },
       {
         path: "face_recognition/camera",
         name: "Face Camera Stream",
-        component: FaceCamera
+        component: FaceCamera,
+        meta: {
+        auth: true,
+        title: 'Face Recognition Camera'
+      }
       },
       {
         path: "face_recognition/camera/form",
         name: "Add Face Camera",
-        component: FaceCameraForm
+        component: FaceCameraForm,
+        meta: {
+        auth: true,
+        title: 'Add Face Recognition Camera'
+      }
       },
       {
         path: "face_recognition/camera/:id/edit",
         name: "Edit Face Camera",
-        component: FaceCameraForm
+        component: FaceCameraForm,
+        meta: {
+        auth: true,
+        title: 'Edit Face Recognition Camera'
+      }
       },
       {
         path: "face_recognition/person/form",
         name: "Add New Person",
-        component: PersonForm
+        component: PersonForm,
+        meta: {
+        auth: true,
+        title: 'Add Person'
+      }
       },
       {
         path: "face_recognition/person/:id/edit",
         name: "Edit Person data",
-        component: PersonForm
+        component: PersonForm,
+        meta: {
+        auth: true,
+        title: 'Edit Person'
+      }
       },
       {
         path: "face_recognition/stream",
         name: "Face Stream",
-        component: FaceStream
+        component: FaceStream,
+        meta: {
+        auth: true,
+        title: 'Face Recognition Live Stream'
+      }
       },
       {
         path: "face_recognition/:id/stream",
         name: "Face Detail Stream",
-        component: FaceStreamDetail
+        component: FaceStreamDetail,
+        meta: {
+        auth: true,
+        title: 'Face Recognition Stream Detail'
+      }
       },
       {
         path: "face_recognition/find",
         name: "Face Find",
-        component: FaceFind
+        component: FaceFind,
+        meta: {
+        auth: true,
+        title: 'Find Face '
+      }
+      },
+
+      // ANPR Routes
+      {
+        path: "anpr/stream",
+        name: "ANPR Stream",
+        component: ANPRStream,
+        meta: {
+          auth: true,
+          title: 'ANPR Live Stream'
+        }
+      },
+      {
+        path: "anpr/data",
+        name: "ANPR Data",
+        component: ANPRData,
+        meta: {
+          auth: true,
+          title: 'ANPR Data Record'
+        }
+      },
+      {
+        path: "anpr/:id/stream",
+        name: "ANPR Stream Detail",
+        component: ANPRStreamDetail,
+        meta: {
+          auth: true,
+          title: 'ANPR Stream Detail'
+        }
+      },
+      {
+        path: "anpr/camera",
+        name: "ANPR Camera",
+        component: ANPRCamera,
+        meta: {
+          auth: true,
+          title: 'ANPR Camera'
+        }
+      },
+      {
+        path: "anpr/filtering",
+        name: "ANPR Filtering",
+        component: ANPRFiltering,
+        meta: {
+          auth: true,
+          title: 'ANPR Filtering'
+        }
       },
     ]
   }

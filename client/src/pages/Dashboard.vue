@@ -97,7 +97,7 @@ import VueApexCharts from 'vue-apexcharts'
               opacity: 1
             },
             toolbar: {
-              show: true
+              show: false
             },
             animations: {
                 enabled: true,
@@ -286,7 +286,7 @@ import VueApexCharts from 'vue-apexcharts'
       async traffic(){
         const self = this
         try {
-          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + 'trend?start_date=&end_date=&lane=all')
+          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/trend?start_date=&end_date=&lane=all')
           data.datasets.forEach((value, index) => {
             Object.keys(value.data).forEach((hour) => {
               var index_hour = self.hours.indexOf(hour);

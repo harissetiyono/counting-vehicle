@@ -41,16 +41,17 @@ Route::get('/heatmap_range', 'CountingController@heatmap_range');
 Route::get('/realtime/count/{id}', 'CountingController@liveCount');
 
 //face recognition
-// Route::get('/person', 'PersonController@index');
-// Route::get('/person/{id}', 'PersonController@show');
-// Route::get('/person/{id}/edit', 'PersonController@edit');
-// Route::post('/person', 'PersonController@store');
-// Route::put('/person/{id}', 'PersonController@update');
 Route::resource('person', 'PersonController');
 Route::get('/get_face/{id}', 'PersonController@getFacePhoto');
 Route::get('/train', 'PersonController@runTrain');
-
 Route::post('/find_face', 'PersonController@findByPhoto');
+
+
+//ANPR
+Route::resource('anpr', 'ANPRController');
+Route::get('filtering/anpr', 'ANPRController@filtering');
+Route::get('filtering/{id}/anpr', 'ANPRController@showPlateHistory');
+Route::get('filtering/{id}/check', 'ANPRController@checkFilter');
 
 Route::get('/profession', function () {
     $profession = Profession::all();

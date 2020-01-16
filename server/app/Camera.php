@@ -9,4 +9,9 @@ class Camera extends Model
 {
     use SoftDeletes;
     protected $guarded = ['id', 'created_at', 'updated_at'];
+
+    public function anpr()
+    {
+        return $this->hasMany(ANPR::class);
+    }
 }

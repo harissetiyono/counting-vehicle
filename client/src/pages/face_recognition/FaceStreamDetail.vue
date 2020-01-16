@@ -226,7 +226,6 @@ import VueLoadImage from 'vue-load-image'
           window.console.log('socket connected')
       },
       face_detect: function (data) {
-          window.console.log(data)
           if (this.face_all.length == 12) {
             this.$delete(this.face_all, 11)
           }

@@ -10,7 +10,7 @@
             </vue-load-image>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                    <v-btn :to="'/live/'+item.id">
+                    <v-btn :to="item.id + '/live/'">
                       {{ item.name + ' ' }}
                       <!-- <div v-if="item.status == 1">
                         <v-icon class="pl-2" color="green" left >mdi-brightness-1</v-icon>
@@ -24,7 +24,7 @@
           </v-card>
         </v-flex>
       </v-layout>
-        <div class="text-center">
+        <div class="text-center" v-if="length > 1">
           <v-pagination
             v-model="page"
             :length="length"

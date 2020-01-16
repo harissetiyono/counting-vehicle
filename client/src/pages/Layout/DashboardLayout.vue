@@ -5,7 +5,7 @@
       clipped-left
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>{{ categories_vision_select }}</v-toolbar-title>
+      <v-toolbar-title><v-icon class="pb-1" medium>{{ categories_vision_icon }}</v-icon> {{ categories_vision_select }}</v-toolbar-title>
       <v-spacer />
       <v-row
         class="pt-4 pr-4"
@@ -112,6 +112,42 @@
           </v-list-item>
         </v-list>
       </div>
+      <div v-else-if="categories_vision_select == 'ANPR'">
+          <v-list dense>
+            <v-list-item to="/anpr/data">
+            <v-list-item-action>
+              <v-icon>mdi-database</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Data Record</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/anpr/stream">
+            <v-list-item-action>
+              <v-icon>mdi-wifi</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Live Stream</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/anpr/filtering">
+            <v-list-item-action>
+              <v-icon>mdi-database-search</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Whitelist / Blacklist</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/anpr/camera">
+            <v-list-item-action>
+              <v-icon>mdi-settings</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Camera</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
     </v-navigation-drawer>
     <v-content>
       <vue-progress-bar></vue-progress-bar>
@@ -139,12 +175,11 @@ import DashboardContent from "./Content.vue";
     },
     data: () => ({
       drawer: true,
-      app_name: '',
-      categories_vision: ['Face Recognition', 'Counting Vehicle'],
-      categories_vision_select : 'Face Recognition',
+      categories_vision: ['Face Recognition', 'Counting Vehicle', 'ANPR'],
+      categories_vision_select : 'ANPR',
+      categories_vision_icon : null,
     }),
     created () {
-      this.app_name = process.env.VUE_APP_NAME
       this.$vuetify.theme.dark = false
     },
 
@@ -152,9 +187,14 @@ import DashboardContent from "./Content.vue";
       changeCategories(){
         var categories = this.categories_vision_select
         if (categories == "Face Recognition") {
-          this.$router.push({path: '/face_recognition/camera'})
-        }else if (categories == "Face Recognition") {
+          this.categories_vision_icon = 'mdi-face-recognition'
+          this.$router.push({path: '/face_recognition/stream'})
+        }else if (categories == "Counting Vehicle") {
+          this.categories_vision_icon = 'mdi-car-multiple'
           this.$router.push({path: '/dashboard'})
+        }else if (categories == "ANPR") {
+          this.categories_vision_icon = 'mdi-focus-field-horizontal'
+          this.$router.push({path: '/anpr/stream'})
         }
       }
     }

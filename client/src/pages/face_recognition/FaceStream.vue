@@ -24,7 +24,7 @@
           </v-card>
         </v-flex>
       </v-layout>
-        <div class="text-center">
+        <div class="text-center" v-if="length > 1">
           <v-pagination
             v-model="page"
             :length="length"
@@ -71,7 +71,7 @@ import VueLoadImage from 'vue-load-image'
         this.cameras = data.data
         this.length = data.last_page
 
-        data.forEach((element, i) => {
+        data.data.forEach((element, i) => {
           this.axios.get(process.env.VUE_APP_IP_SERVER + ':' + element.port).then(function(){
             _self.cameras[i].status = 1
           }).catch(function(error){

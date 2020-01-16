@@ -144,7 +144,6 @@ import { required, minLength, numeric, between, decimal } from 'vuelidate/lib/va
           try {
               const respone_camera = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera/' + id_camera)
               this.camera_data = respone_camera.data
-              window.console.log(this.camera_data)
             } catch (error) {
                 window.console.log(Object.keys(error), error.message);
             }

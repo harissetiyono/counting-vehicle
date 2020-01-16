@@ -31,69 +31,57 @@
 
         <template v-slot:item.action="{ item }">
           <v-tooltip bottom v-if="item.status == 0">
-                <template v-slot:activator="{ on }">
-                    <v-icon
-                        v-on="on"
-                        small
-                        class="mr-2"
-                        @click="runCamera(item.id, item.port)"
-                    >
-                        mdi-play
-                    </v-icon>
-                </template>
-                <span>Run Camera</span>
-            </v-tooltip>
-            <v-tooltip bottom v-if="item.status == 1">
-                <template v-slot:activator="{ on }">
-                    <v-icon
-                        v-on="on"
-                        small
-                        class="mr-2"
-                        @click="stopCamera(item.port)"
-                    >
-                        mdi-stop
-                    </v-icon>
-                </template>
-                <span>Stop Camera</span>
-            </v-tooltip>   
-            <!-- <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                    <v-icon
-                        v-on="on"
-                        small
-                        class="mr-2"
-                    >
-                        mdi-map-marker
-                    </v-icon>
-                </template>
-                <span>Maps Location</span>
-            </v-tooltip> -->
-            <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                    <v-icon
-                        v-on="on"
-                        small
-                        class="mr-2"
-                        @click="$router.push('/camera/' + item.id + '/edit')"
-                    >
-                        mdi-pencil
-                    </v-icon>
-                </template>
-                <span>Edit</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                    <v-icon
-                        v-on="on"
-                        small
-                        class="mr-2"
-                        @click="deleteItem(item)"
-                    >
-                        mdi-delete
-                    </v-icon>
-                </template>
-                <span>Delete</span>
-            </v-tooltip>
+              <template v-slot:activator="{ on }">
+                  <v-icon
+                      v-on="on"
+                      small
+                      class="mr-2"
+                      @click="runCamera(item.id, item.port)"
+                  >
+                      mdi-play
+                  </v-icon>
+              </template>
+              <span>Run Camera</span>
+          </v-tooltip>
+          <v-tooltip bottom v-if="item.status == 1">
+              <template v-slot:activator="{ on }">
+                  <v-icon
+                      v-on="on"
+                      small
+                      class="mr-2"
+                      @click="stopCamera(item.port)"
+                  >
+                      mdi-stop
+                  </v-icon>
+              </template>
+              <span>Stop Camera</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+                <v-icon
+                    v-on="on"
+                    small
+                    class="mr-2"
+                    @click="$router.push('/camera/' + item.id + '/edit')"
+                >
+                    mdi-pencil
+                </v-icon>
+            </template>
+            <span>Edit</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                  <v-icon
+                      v-on="on"
+                      small
+                      class="mr-2"
+                      @click="deleteItem(item)"
+                  >
+                      mdi-delete
+                  </v-icon>
+              </template>
+              <span>Delete</span>
+          </v-tooltip>
         </template>
 
         <template v-slot:no-data>
@@ -121,13 +109,14 @@
         { text: 'Port', value: 'port' },
         // { text: 'Ip Stream', value: 'ip_stream' },
         { text: 'Status', value: 'status' },
-        { text: 'Actions', value: 'action', sortable: false },
+        { text: 'Actions', value: 'action', sortable: false, width: 150 },
       ],
       cameras: [],
       status : [
         {'id' : 1, 'name' : 'Active'},
         {'id' : 0, 'name' : 'Deactive'},
       ],
+      loading: false
     }),
 
     created () {
@@ -142,11 +131,11 @@
     methods: {
       async initialize () {
           let _self = this
-          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera')
+          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera?system=counting')
           this.cameras = data
 
           data.forEach((element, i) => {
-            this.axios.get('http://' + element.ip_local +':' + element.port).then(function(){
+            this.axios.get(element.ip_local +':' + element.port).then(function(){
               _self.cameras[i].status = 1
             }).catch(function(error){
                 if (!error.response) {
@@ -166,6 +155,7 @@
       runCamera(id, port){
         this.$Progress.start()
         let self = this
+        this.loading = true
     
           this.$notify({
             group: 'foo',
@@ -184,6 +174,7 @@
                 duration: 10000,
               });
               self.initialize()
+              this.loading = false
               self.$Progress.finish()
             }).catch(function(error){
                 if (!error.response) {
@@ -195,6 +186,7 @@
                     duration: 10000,
                   });
                   self.initialize()
+                  this.loading = false
                   self.$Progress.fail()
                 } else {
                   const code = error.response.status

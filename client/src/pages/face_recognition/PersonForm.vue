@@ -252,11 +252,9 @@
             this.overlay = true
             try {
                 if (this.$route.params.id) {
-                    const response1 = await this.axios.put(process.env.VUE_APP_IP_SERVER + '/person/' + this.$route.params.id, {person_data : this.person_data, photos : this.img_url})
-                    window.console.log(response1)
+                    await this.axios.put(process.env.VUE_APP_IP_SERVER + '/person/' + this.$route.params.id, {person_data : this.person_data, photos : this.img_url})
                 }else{
-                    const response2 = await this.axios.post(process.env.VUE_APP_IP_SERVER + '/person', { person_data : this.person_data, photos : this.img_url})
-                    window.console.log(response2)
+                    await this.axios.post(process.env.VUE_APP_IP_SERVER + '/person', { person_data : this.person_data, photos : this.img_url})
                 }
                 this.overlay = false,
                 this.$router.push({path: '/face_recognition/person'})
