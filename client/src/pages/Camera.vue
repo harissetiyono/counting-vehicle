@@ -165,7 +165,7 @@
           });
 
           setTimeout(() => { 
-            this.axios.get('http://localhost:' + port).then(function(){
+            this.axios.get(VUE_APP_IP_SERVER_WITHOUT_PORT + ':' + port).then(function(){
               self.$notify({
                 group: 'foo',
                 type: 'success',
@@ -201,7 +201,7 @@
 
       stopCamera(port){
         let self = this
-        this.axios.post('http://localhost' + ':' + port + '/stop', { action : 'stop' }).then(function(){
+        this.axios.post(process.env.VUE_APP_IP_SERVER_WITHOUT_PORT + ':' + port + '/stop', { action : 'stop' }).then(function(){
           self.$notify({
             group: 'foo',
             type: 'success',

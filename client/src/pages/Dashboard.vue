@@ -276,7 +276,7 @@ import VueApexCharts from 'vue-apexcharts'
     methods: {
       async initialize(){
         try {
-            const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera/')
+            const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera?system=counting')
             this.cameras = data
           } catch (error) {
               window.console.log(Object.keys(error), error.message);

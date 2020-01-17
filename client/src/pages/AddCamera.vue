@@ -282,9 +282,9 @@ const height = window.innerHeight;
     methods: {
         async initialize(id_camera){
           try {
-              const respone_camera = await this.axios.get('http://127.0.0.1:8001/camera/' + id_camera)
+              const respone_camera = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera/' + id_camera)
               this.camera_data = respone_camera.data
-              const respone_lines = await this.axios.get('http://127.0.0.1:8001/lines/' + id_camera)
+              const respone_lines = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/lines/' + id_camera)
               this.list = respone_lines.data
             } catch (error) {
                 window.console.log(Object.keys(error), error.message);
@@ -357,9 +357,9 @@ const height = window.innerHeight;
         async save(id){
             try {
                 if (id) {
-                    await this.axios.put('http://localhost:8001/camera', { camera_data : this.camera_data, line_path : this.list })
+                    await this.axios.put(process.env.VUE_APP_IP_SERVER + '/camera', { camera_data : this.camera_data, line_path : this.list })
                 }else{
-                    await this.axios.post('http://localhost:8001/camera', { camera_data : this.camera_data, line_path : this.list })
+                    await this.axios.post(process.env.VUE_APP_IP_SERVER + '/camera', { camera_data : this.camera_data, line_path : this.list })
                 }
                 this.$router.push({ name: 'Camera' })
             } catch (error) {
@@ -377,13 +377,13 @@ const height = window.innerHeight;
                 } else {
                     self.error_show = false
                     self.statusConnection = true
-                    self.axios.post('http://localhost:8001/generate', { url : self.camera_data.ip_stream, port : self.camera_data.port })
+                    self.axios.post(process.env.VUE_APP_IP_SERVER + '/generate', { url : self.camera_data.ip_stream, port : self.camera_data.port })
                     setTimeout(() => {
                         self.e1 = 2
                         const image = new window.Image();
                         const today = new Date();
                         const time = today.getHours() + today.getMinutes() + today.getSeconds();
-                        image.src = 'http://localhost:8001/storage/'+ self.camera_data.port +'.jpg?t=' + time;
+                        image.src = process.env.VUE_APP_IP_SERVER + '/storage/'+ self.camera_data.port +'.jpg?t=' + time;
                         image.onload = () => {
                             self.image = image; 
                         };

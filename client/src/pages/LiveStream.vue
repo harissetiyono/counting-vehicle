@@ -69,12 +69,12 @@ import VueLoadImage from 'vue-load-image'
     methods: {
       async initialize () {
         let _self = this
-        const { data } = await this.axios.get('http://127.0.0.1:8001/camera?page=' + this.page)
+        const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera?page=' + this.page + '&system=counting')
         this.cameras = data.data
         this.length = data.last_page
 
-        data.forEach((element, i) => {
-          this.axios.get('http://127.0.0.1:' + element.port).then(function(){
+        data.data.forEach((element, i) => {
+          this.axios.get(process.env.VUE_APP_IP_SERVER_WITHOUT_PORT + ':' + element.port).then(function(){
             _self.cameras[i].status = 1
             // let random = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             // _self.cameras[i].stream = 'http://localhost:' + element.port + '/' + random + '/stream.mjpg'

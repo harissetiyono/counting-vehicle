@@ -236,7 +236,7 @@ import { required, minLength } from 'vuelidate/lib/validators'
     methods: {
       async initialize(){
         try {
-            const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera/')
+            const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera?system=counting')
             this.camera_list = data
           } catch (error) {
               window.console.log(Object.keys(error), error.message);

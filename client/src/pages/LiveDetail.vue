@@ -381,7 +381,7 @@ import VueLoadImage from 'vue-load-image'
 
     methods: {
         async initialize () {
-          const { data } = await this.$http.get(process.env.VUE_APP_IP_SERVER + '/camera')
+          const { data } = await this.$http.get(process.env.VUE_APP_IP_SERVER + '/camera?system=counting')
           this.camera_list = data
         },
 
