@@ -10,7 +10,7 @@
               <v-text-field 
                 class="pl-2"
                 v-model="plateNumber"
-                label="Number Plate" 
+                label="License Number" 
                 outlined 
                 dense
                 clearable
@@ -24,9 +24,9 @@
                   item-value="id"
                   item-text="name"
                   label="Camera Select"
-                  multiple
                   outlined 
                   dense
+                  @change="getDataFromApi"
               ></v-combobox>
             </v-col>
             <v-col cols="12" md="3">
@@ -35,9 +35,9 @@
                     v-model="matching_select"
                     :items="matching"
                     label="Matching Type"
-                    multiple
                     outlined 
                     dense
+                    @change="getDataFromApi"
                 ></v-combobox>
             </v-col>
           </v-row>
@@ -82,16 +82,14 @@
           </template>
           <template v-slot:item.picName="{ item }">
             <v-img class="ma-1" :src="'http://127.0.0.1:8001/storage/9001.jpg'" width="80"/>
-            <!-- <vue-load-image>
-              <img slot="image" class="pa-1" :src="'http://127.0.0.1:8001/storage/9001.jpg'" width="80"/>
-              <v-img slot="preloader" src="@/assets/preloader.gif" width="100"/>
-              <v-img slot="error" src="@/assets/offline.jpg" width="100"/>
-            </vue-load-image> -->
           </template>
           <template v-slot:item.id_camera="{ item }">
             <v-btn class="ma-2" tile color="success" @click="openDetail(item)">
               <v-icon left>mdi-magnify</v-icon> Check
             </v-btn>
+          </template>
+          <template v-slot:item.created_at="{ item }">
+            {{ item.created_at | moment }}
           </template>
           </v-data-table>
           <v-pagination class="pa-2" v-model="page" :length="pageCount" :total-visible="7" circle></v-pagination>
@@ -187,6 +185,8 @@
 
 <script>
 import VueLoadImage from 'vue-load-image'
+import moment from 'moment'
+
   export default {
     components: {'vue-load-image': VueLoadImage },
     data () {
@@ -199,11 +199,11 @@ import VueLoadImage from 'vue-load-image'
         dialog: false,
         plateNumber : '',
         cameras : [],
-        camera_select : [],
+        camera_select : '',
         directions : ['forward', 'backward'],
         direction_select: ['forward', 'backward'],
-        matching : ['none', 'blacklist', 'whitelist'],
-        matching_select : ['none'],
+        matching : ['all','none', 'blacklist', 'whitelist'],
+        matching_select : ['all'],
         showDetail : {
           'picName' : null,
           'plateNumber' : null,
@@ -225,6 +225,7 @@ import VueLoadImage from 'vue-load-image'
           { text: 'Direction', value: 'direction' },
           { text: 'Status', value: 'matchingResult', align: 'center' },
           { text: 'Camera', value: 'camera.name' },
+          { text: 'Time', value: 'created_at' },
           { text: 'Action', value: 'id_camera', sortable: false },
         ],
       }
@@ -235,12 +236,7 @@ import VueLoadImage from 'vue-load-image'
         this.getDataFromApi()
       },
       plateNumber(){
-        window.console.log(this.plateNumber)
-        if (this.plateNumber == null ) {
-          this.getDataFromApi()
-        }else if(this.plateNumber.length > 3){
-          this.getDataFromApi()
-        }
+        this.getDataFromApi()
       },
     },
 
@@ -254,7 +250,7 @@ import VueLoadImage from 'vue-load-image'
         this.loading = true
         let self = this
         // Make a request for a user with a given ID
-        this.axios.get('http://127.0.0.1:8001/anpr?page=' + this.page + '&itemsPerPage=' + this.itemsPerPage + '&plateNumber=' + this.plateNumber)
+        this.axios.get('http://127.0.0.1:8001/anpr?page=' + this.page + '&itemsPerPage=' + this.itemsPerPage + '&plateNumber=' + this.plateNumber + '&matchingResult=' + this.matching_select + '&camera=' + this.camera_select.id)
           .then(function (response) {
             self.data_record = response.data.data
             setTimeout(() => {
@@ -324,5 +320,12 @@ import VueLoadImage from 'vue-load-image'
          })
       }
     },
-  }
+
+    filters: {
+      moment: function (date) {
+        moment.locale('id')
+        return moment(date).format('LLL');
+      }
+    }
+}
 </script>

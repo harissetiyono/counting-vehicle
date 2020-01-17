@@ -7,87 +7,97 @@
                 sort-by="categories"
                 class="elevation-1"
                 >
-                    <template v-slot:top>
-                    <v-toolbar flat color="white">
-                        <v-toolbar-title>Blacklist & Whitelist</v-toolbar-title>
-                        <v-divider
-                        class="mx-4"
-                        inset
-                        vertical
-                        ></v-divider>
-                        <v-text-field
-                            v-model="search"
-                            append-icon="mdi-search"
-                            label="Search"
-                            single-line
-                            hide-details
-                        ></v-text-field>
-                        <v-spacer></v-spacer>
-                        <v-dialog v-model="dialog" max-width="500px">
-                        <template v-slot:activator="{ on }">
-                            <v-btn color="primary" dark class="mb-2" v-on="on">New Data</v-btn>
-                        </template>
-                        <v-card>
-                            <v-card-title>
-                            <span class="headline">{{ formTitle }}</span>
-                            </v-card-title>
+                <template v-slot:top>
+                  <v-toolbar flat color="white">
+                      <v-toolbar-title>Blacklist & Whitelist</v-toolbar-title>
+                      <v-divider
+                      class="mx-4"
+                      inset
+                      vertical
+                      ></v-divider>
+                      <v-text-field
+                          v-model="search"
+                          append-icon="mdi-search"
+                          label="Search"
+                          single-line
+                          hide-details
+                      ></v-text-field>
+                      <v-spacer></v-spacer>
+                      <v-dialog v-model="dialog" max-width="500px">
+                      <template v-slot:activator="{ on }">
+                          <v-btn color="primary" dark class="mb-2" v-on="on">New Data</v-btn>
+                      </template>
+                      <v-card>
+                          <v-card-title>
+                          <span class="headline">{{ formTitle }}</span>
+                          </v-card-title>
 
-                            <v-card-text>
-                            <v-container>
-                                <v-row>
-                                <v-col cols="12">
-                                    <v-text-field v-model="editedItem.plateNumber" label="Plate Number" outlined dense></v-text-field>
-                                </v-col>
-                                <v-col cols="12">
-                                    <v-select
-                                    v-model="editedItem.categories"
-                                    :items="categories"
-                                    label="Categories data"
-                                    outlined
-                                    dense
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="12">
-                                    <v-textarea v-model="editedItem.description" label="Description" outlined dense></v-textarea>
-                                </v-col>
-                                </v-row>
-                            </v-container>
-                            </v-card-text>
+                          <v-card-text>
+                          <v-container>
+                              <v-row>
+                              <v-col class="pa-0" cols="12">
+                                  <v-text-field v-model="editedItem.plateNumber" label="Plate Number" outlined dense></v-text-field>
+                              </v-col>
+                              <v-col class="pa-0" cols="12">
+                                  <v-select
+                                  v-model="editedItem.categories"
+                                  :items="categories"
+                                  label="Categories data"
+                                  outlined
+                                  dense
+                                  ></v-select>
+                              </v-col>
+                              <v-col class="pa-0" cols="12">
+                                  <v-textarea v-model="editedItem.description" label="Description" outlined dense></v-textarea>
+                              </v-col>
+                              <v-col class="pa-0" cols="12">
+                                  <div class="text-primary">
+                                    Action filter 
+                                    <v-switch v-model="editedItem.status"  value="1"></v-switch>
+                                  </div>
+                              </v-col>
+                              </v-row>
+                          </v-container>
+                          </v-card-text>
 
-                            <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                            <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                        </v-dialog>
-                    </v-toolbar>
-                    </template>
-                    <template v-slot:item.action="{ item }">
-                        <v-icon
-                            small
-                            class="mr-2"
-                            @click="showHistory(item)"
-                        >
-                            mdi-file-find
-                        </v-icon>
+                          <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                          <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                          </v-card-actions>
+                      </v-card>
+                      </v-dialog>
+                  </v-toolbar>
+                </template>
+                <template v-slot:item.action="{ item }">
                     <v-icon
                         small
                         class="mr-2"
-                        @click="editItem(item)"
+                        @click="showHistory(item)"
                     >
-                        mdi-pencil
+                        mdi-file-find
                     </v-icon>
-                    <v-icon
-                        small
-                        @click="deleteItem(item)"
-                    >
-                        mdi-delete
-                    </v-icon>
-                    </template>
-                    <template v-slot:no-data>
-                    <v-btn color="primary" @click="initialize">Reset</v-btn>
-                    </template>
+                  <v-icon
+                      small
+                      class="mr-2"
+                      @click="editItem(item)"
+                  >
+                      mdi-pencil
+                  </v-icon>
+                  <v-icon
+                      small
+                      @click="deleteItem(item)"
+                  >
+                      mdi-delete
+                  </v-icon>
+                </template>
+                <template v-slot:item.status="{ item }">
+                  <v-chip v-if="item.status == 1" color="green" dark small>Active</v-chip>
+                  <v-chip v-if="item.status == null" color="red" dark small>Deactive</v-chip>
+                </template>
+                <template v-slot:no-data>
+                  <v-btn color="primary" @click="initialize">Reset</v-btn>
+                </template>
             </v-data-table>
         </v-container>
 
@@ -148,8 +158,6 @@
             </v-card>
         </v-dialog>
     </v-row>
-
-    
     
 </template>
 <script>
@@ -170,6 +178,7 @@
         },
         { text: 'Categories', value: 'categories' },
         { text: 'Description', value: 'description' },
+        { text: 'Status', value: 'status' },
         { text: 'Actions', value: 'action', sortable: false },
       ],
       filter_data: [],
@@ -177,11 +186,13 @@
       editedItem: {
         plateNumber: '',
         categories: 'blacklist',
+        status: '1',
         description: '',
       },
       defaultItem: {
         plateNumber: '',
         categories: 'blacklist',
+        status: '1',
         description: '',
       },
     }),
@@ -212,12 +223,28 @@
       editItem (item) {
         this.editedIndex = this.filter_data.indexOf(item)
         this.editedItem = Object.assign({}, item)
+        if (this.editedItem.status !== null) {
+          this.editedItem.status = this.editedItem.status.toString()
+        }
         this.dialog = true
       },
 
       deleteItem (item) {
+        let self = this
         const index = this.filter_data.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.filter_data.splice(index, 1)
+        confirm('Are you sure you want to delete this item?') && 
+        this.axios.delete('http://127.0.0.1:8001/filtering/'+item.id).then(function(){
+            self.$swal.fire({
+              position: 'top-end',
+              type: 'success',
+              title: 'Data success deleted',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            self.filter_data.splice(index, 1)
+        }).catch(function(error) {
+          alert(error)
+        })
       },
 
       close () {
@@ -229,21 +256,56 @@
       },
 
       save () {
+        let self = this
         if (this.editedIndex > -1) {
-          Object.assign(this.filter_data[this.editedIndex], this.editedItem)
+          this.axios.put('http://127.0.0.1:8001/filtering/'+this.editedItem.id, this.editedItem).then(function(){
+            self.$swal.fire({
+              position: 'top-end',
+              type: 'success',
+              title: 'Data success update',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            Object.assign(self.filter_data[self.editedIndex], self.editedItem)
+        }).catch(function(error) {
+          self.$swal.fire({
+            position: 'top-end',
+            type: 'error',
+            title: error,
+            showConfirmButton: false,
+            timer: 1500
+          })
+        })
         } else {
-          this.filter_data.push(this.editedItem)
+          this.axios.post('http://127.0.0.1:8001/filtering/', this.editedItem).then(function(){
+            self.$swal.fire({
+              position: 'top-end',
+              type: 'success',
+              title: 'Successfully added data',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            self.filter_data.push(self.editedItem)
+          }).catch(function(error) {
+            self.$swal.fire({
+              position: 'top-end',
+              type: 'error',
+              title: error,
+              showConfirmButton: false,
+              timer: 1500
+            })
+          })
         }
         this.close()
       },
 
       showHistory(item){
           this.axios.get('http://127.0.0.1:8001/filtering/' + item.plateNumber + '/anpr').then(response => {
-              this.history = response.data
-              this.plate_categories = item.categories
-              this.dialog_history = true
+            this.history = response.data
+            this.plate_categories = item.categories
+            this.dialog_history = true
           }).catch(function(error){
-              alert(error)
+            alert(error)
           })
       },
 
