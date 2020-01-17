@@ -165,7 +165,7 @@
           });
 
           setTimeout(() => { 
-            this.axios.get(VUE_APP_IP_SERVER_WITHOUT_PORT + ':' + port).then(function(){
+            this.axios.get(process.env.VUE_APP_IP_SERVER_WITHOUT_PORT + ':' + port).then(function(){
               self.$notify({
                 group: 'foo',
                 type: 'success',

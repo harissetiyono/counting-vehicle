@@ -493,7 +493,7 @@ import VueLoadImage from 'vue-load-image'
 
         checkConnection(port){
           const _self = this
-          this.axios.get('http://127.0.0.1:' + port).then(function(){
+          this.axios.get(process.env.VUE_APP_IP_SERVER_WITHOUT_PORT + ':' + port).then(function(){
             _self.videoStream()
           }).catch(function(error){
               if (!error.response) {
@@ -514,7 +514,7 @@ import VueLoadImage from 'vue-load-image'
 
         videoStream(){
             let random = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-            this.videoDefault = "http://127.0.0.1:" + this.port + "/" + random + "/stream.mjpg"
+            this.videoDefault = process.env.VUE_APP_IP_SERVER_WITHOUT_PORT + ":" + this.port + "/" + random + "/stream.mjpg"
         },
 
         imageLoadError(){
