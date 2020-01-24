@@ -18,6 +18,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/sync', function () {
+    return "Sync On the way!";
+});
+
 Route::get('/camera', 'CameraController@index');
 Route::post('/camera', 'CameraController@store');
 Route::put('/camera', 'CameraController@update');

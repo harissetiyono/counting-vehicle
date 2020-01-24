@@ -13,4 +13,9 @@ class ANPR extends Model
     {
         return $this->belongsTo(Camera::class, 'id_camera');
     }
+
+    public function vehicleType()
+    {
+        return $this->belongsTo(vehicleType::class, 'vehicleType');
+    }
 }

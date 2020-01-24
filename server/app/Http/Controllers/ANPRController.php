@@ -16,18 +16,23 @@ class ANPRController extends Controller
         $matchingResult = $request->get('matchingResult');
         $where = [];
         if ($plateNumber == null && $matchingResult == 'all' && $camera == 'undefined') {
-            $anpr = ANPR::with(['camera'])->paginate($itemsPerPage);
+            $anpr = ANPR::with(['camera', 'vehicleType'])->orderByDesc("created_at")->paginate($itemsPerPage);
         }else{
-            if (($plateNumber !== null)) {
+            if ($plateNumber !== null) {
                 $where[] = ['plateNumber', 'like', '%'.$plateNumber.'%'];
             }
+
+            if ($plateNumber !== 'undefined') {
                 $where[] = ['id_camera', $camera];
+            }
+            
             if ($matchingResult == 'none') {
-                $where[] = ['matchingResult', null];
+                $where[] = ['matchingResult', 'otherlist'];
             }else if($matchingResult !== 'none' && $matchingResult !== 'all'){
                 $where[] = ['matchingResult', $matchingResult];
             }
-            $anpr = ANPR::with(['camera'])->where($where)->paginate($itemsPerPage);
+            
+            $anpr = ANPR::with(['camera', 'vehicleType'])->where($where)->paginate($itemsPerPage);
         }
         
         return $anpr;
@@ -40,7 +45,9 @@ class ANPRController extends Controller
 
     public function store(Request $request)
     {
-        
+        $datas = $request->all();
+        $anpr = ANPR::create($datas);
+        return $anpr;
     }
 
     public function show($id)
