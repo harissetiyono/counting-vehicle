@@ -15,7 +15,21 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
- 
+import VueSelectImage from 'vue-select-image'
+require('vue-select-image/dist/vue-select-image.css')
+import '@mdi/font/css/materialdesignicons.css'
+import ZoomOnHover from "vue-zoom-on-hover";
+// import vPlayBack from 'v-playback'
+
+import VuePlyr from 'vue-plyr'
+
+// The second argument is optional and sets the default config values for every player.
+Vue.use(VuePlyr, {
+  plyr: {
+    fullscreen: { enabled: false }
+  },
+  emit: ['ended']
+})
 
 moment.tz.setDefault('Asia/Jakarta')
 
@@ -29,6 +43,8 @@ const router = new VueRouter({
 });
 
 Vue.config.productionTip = false
+
+// Vue.use(vPlayBack)
 Vue.use(VueKonva)
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios)
@@ -36,6 +52,8 @@ Vue.use(VueApexCharts)
 Vue.use(Notifications)
 Vue.use(Vuelidate)
 Vue.use(VueSweetalert2);
+Vue.use(VueSelectImage)
+Vue.use(ZoomOnHover);
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 Vue.use(new VueSocketIO({

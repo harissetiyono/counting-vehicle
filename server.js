@@ -3,12 +3,9 @@ var http = require('http').createServer(app);
 var bodyParser = require('body-parser')
 var io = require('socket.io')(http);
 var cors = require('cors');
+var axios = require('axios')
 
-// bodyParser = {
-  // json: {limit: '50mb', extended: true},
-  // urlencoded: {limit: '50mb', extended: true },
-//   cors : {origin: '*'}
-// };
+const ip_server = "http://127.0.0.1:8001/"
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -44,11 +41,22 @@ io.on('connect', function (socket) {
     response.send(request.body);    // echo the result back
   });
 
+  app.post('/plate_license', function(request, response){
+    console.log(request.body);      // your JSON
+    io.to(request.body['id_camera']).emit('plate_live', request.body);
+    response.send(request.body);    // echo the result back
+  });
+
 });
 
 app.post('/plate_recognition', function(request, response){
   console.log(request.body);      // your JSON
-  io.emit('plate_recognition', request.body);
+  if (request.body['violationStatus'] == null) {
+    io.emit('plate_recognition', request.body);
+  }else{
+    io.emit('violation', request.body);
+  }
+  
   response.send(request.body);    // echo the result back
 });
 

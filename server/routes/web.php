@@ -18,10 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/sync', function () {
-    return "Sync On the way!";
-});
-
 Route::get('/camera', 'CameraController@index');
 Route::post('/camera', 'CameraController@store');
 Route::put('/camera', 'CameraController@update');
@@ -50,16 +46,18 @@ Route::get('/get_face/{id}', 'PersonController@getFacePhoto');
 Route::get('/train', 'PersonController@runTrain');
 Route::post('/find_face', 'PersonController@findByPhoto');
 
-
 //ANPR
 Route::resource('anpr', 'ANPRController');
+Route::resource('violation', 'ViolationController');
 
+Route::get('cameras/anpr', 'ANPRCameraController@index');
 Route::get('filtering/anpr', 'ANPRController@filtering');
 Route::get('filtering/{id}/anpr', 'ANPRController@showPlateHistory');
 Route::get('filtering/{id}/check', 'ANPRController@checkFilter');
 Route::delete('filtering/{id}', 'ANPRController@filterDestroy');
 Route::put('filtering/{id}', 'ANPRController@filterUpdate');
 Route::post('filtering', 'ANPRController@filterStore');
+Route::get('sync', 'ANPRController@sync');
 
 Route::get('/profession', function () {
     $profession = Profession::all();

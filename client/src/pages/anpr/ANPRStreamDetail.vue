@@ -8,7 +8,7 @@
         </v-card-title>
         <v-card-text>
           <vue-load-image>
-            <img slot="image" :src="'http://192.168.2.9/Streaming/channels/102/httppreview'" style="width: 80px"/>
+            <img slot="image" :src="'http://192.168.2.9/Streaming/channels/3/httppreview'" style="width:100%"/>
             <v-img slot="preloader" src="@/assets/preloader.gif"/>
             <v-img slot="error" src="@/assets/offline.jpg"/>
           </vue-load-image>
@@ -42,7 +42,7 @@
             <template v-slot:item.picName="{ item }">
                 <div class="pa-1">
                   <vue-load-image>
-                    <img slot="image" :src=" ip_server + '/storage/plate_record/' + convertDate(item.created_at) + '/' + item.picName + '.jpg'" style="width: 80px"/>
+                    <img slot="image" :src=" ip_server + '/storage/2020-01-17/' + item.picName + '.jpg'" style="width: 80px"/>
                     <v-img slot="preloader" src="@/assets/preloader.gif"/>
                     <v-img slot="error" src="@/assets/offline.jpg" width="80"/>
                   </vue-load-image>

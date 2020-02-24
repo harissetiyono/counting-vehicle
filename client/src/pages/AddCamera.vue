@@ -355,6 +355,7 @@ const height = window.innerHeight;
         },
 
         async save(id){
+            this.camera_data.system = 'counting'
             try {
                 if (id) {
                     await this.axios.put(process.env.VUE_APP_IP_SERVER + '/camera', { camera_data : this.camera_data, line_path : this.list })

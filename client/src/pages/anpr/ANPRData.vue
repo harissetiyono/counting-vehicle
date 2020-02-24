@@ -56,7 +56,7 @@
             <div class="text-center">
               <v-chip
                 class="ma-2"
-                v-if="item.matchingResult == null"
+                v-if="item.matchingResult == null || item.matchingResult == 'otherlist'"
               >
                 None
               </v-chip>
@@ -81,7 +81,7 @@
             </div>
           </template>
           <template v-slot:item.picName="{ item }">
-            <v-img class="ma-1" :src="'http://127.0.0.1:8001/storage/9001.jpg'" width="80"/>
+            <v-img class="ma-1" :src="'http://127.0.0.1:8001/storage/' + dateConvert(item.created_at)+ '/'+ item.picName + '.jpg'" width="80"/>
           </template>
           <template v-slot:item.id_camera="{ item }">
             <v-btn class="ma-2" tile color="success" @click="openDetail(item)">
@@ -111,7 +111,7 @@
                   <td width="5">{{ ':' }}</td>
                   <td class="text-left">
                     <vue-load-image>
-                      <img slot="image" class="pa-1" :src="'http://127.0.0.1:8001/storage/9001.jpg'" width="120"/>
+                      <img slot="image" class="pa-1" :src="'http://127.0.0.1:8001/storage/' + dateConvert(showDetail.created_at)+ '/'+ showDetail.picName + '.jpg'" width="120"/>
                       <v-img slot="preloader" src="@/assets/preloader.gif" width="100"/>
                       <v-img slot="error" src="@/assets/offline.jpg" width="100"/>
                     </vue-load-image>
@@ -128,7 +128,7 @@
                   <td>
                       <v-chip
                         class="ma-2"
-                        v-if="showDetail.matchingResult == null"
+                        v-if="showDetail.matchingResult == null || showDetail.matchingResult == 'otherlist'"
                         small
                       >
                         None
@@ -211,15 +211,16 @@ import moment from 'moment'
           'camera' : null,
           'longitude' : null,
           'latitude' : null,
+          'created_at' : null,
         },
         headers: [
-          {
-            text: 'Image',
-            align: 'left',
-            sortable: false,
-            value: 'picName',
-            width: 150,
-          },
+          // {
+          //   text: 'Image',
+          //   align: 'left',
+          //   sortable: false,
+          //   value: 'picName',
+          //   width: 150,
+          // },
           { text: 'License Number', value: 'plateNumber' },
           { text: 'Lane', value: 'laneNo' },
           { text: 'Direction', value: 'direction' },
@@ -250,7 +251,7 @@ import moment from 'moment'
         this.loading = true
         let self = this
         // Make a request for a user with a given ID
-        this.axios.get('http://127.0.0.1:8001/anpr?page=' + this.page + '&itemsPerPage=' + this.itemsPerPage + '&plateNumber=' + this.plateNumber + '&matchingResult=' + this.matching_select + '&camera=' + this.camera_select.id)
+        this.axios.get(process.env.VUE_APP_IP_SERVER + '/anpr?page=' + this.page + '&itemsPerPage=' + this.itemsPerPage + '&plateNumber=' + this.plateNumber + '&matchingResult=' + this.matching_select + '&camera=' + this.camera_select.id)
           .then(function (response) {
             self.data_record = response.data.data
             setTimeout(() => {
@@ -261,7 +262,7 @@ import moment from 'moment'
           .catch(function (error) {
             self.loading = false
             self.data_record = []
-            alert(error)
+            window.console.log(error)
           })
       },
 
@@ -278,12 +279,17 @@ import moment from 'moment'
           'matchingResult' : item.matchingResult,
           'camera' : item.camera.name,
           'longitude' : item.longitude,
-          'latitude' : item.latitude
+          'latitude' : item.latitude,
+          'created_at' : item.created_at,
         }
       },
 
       getCoordinate(item){
           window.open('http://maps.google.com/maps?&z=15&mrt=yp&t=m&q='+item.longitude+',' +item.latitude, '_blank');
+      },
+
+      dateConvert(created_at){
+          return moment(created_at).format('YYYY-MM-DD');
       }
 
     },
@@ -293,7 +299,7 @@ import moment from 'moment'
           window.console.log('socket connected')
       },
       plate_recognition: function (data) {
-         this.axios.get('http://127.0.0.1:8001/filtering/'+data.plateNumber+'/check').then( response => {
+         this.axios.get(process.env.VUE_APP_IP_SERVER + '/filtering/'+data.plateNumber+'/check').then( response => {
            if (response.data.categories == 'blacklist') {
              this.$swal.fire({
                 type: 'error',
@@ -306,17 +312,10 @@ import moment from 'moment'
                 cancelButtonText: 'No, cancel!',
                 reverseButtons: false
               })
-           }else{
-             this.$swal.fire({
-                type: 'info',
-                title: 'WHITELIST PLATE DETECTED',
-                text: 'Keterangan : ' + response.data.description,
-                confirmButtonText: 'OK!',
-              })
            }
-           this.getDataFromApi()
+           this.data_record.unshift(data)
          }).catch(function (error){
-           alert('data tidak ditemukan : ' + error)
+           window.console.log(error)
          })
       }
     },
@@ -325,7 +324,7 @@ import moment from 'moment'
       moment: function (date) {
         moment.locale('id')
         return moment(date).format('LLL');
-      }
+      },
     }
 }
 </script>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ANPR;
 use App\Filtering;
+use Illuminate\Support\Facades\Validator;
+use GuzzleHttp\Client;
 
 class ANPRController extends Controller
 {
@@ -22,13 +24,11 @@ class ANPRController extends Controller
                 $where[] = ['plateNumber', 'like', '%'.$plateNumber.'%'];
             }
 
-            if ($plateNumber !== 'undefined') {
+            if ($camera !== 'undefined') {
                 $where[] = ['id_camera', $camera];
             }
             
-            if ($matchingResult == 'none') {
-                $where[] = ['matchingResult', 'otherlist'];
-            }else if($matchingResult !== 'none' && $matchingResult !== 'all'){
+            else if($matchingResult !== 'none' && $matchingResult !== 'all'){
                 $where[] = ['matchingResult', $matchingResult];
             }
             
@@ -45,9 +45,29 @@ class ANPRController extends Controller
 
     public function store(Request $request)
     {
-        $datas = $request->all();
+        $datas = (array) $request->all();
+        $validator = Validator::make($datas, [
+            'plateNumber' => 'required',
+            'picName' => 'required',
+            'laneNo' => 'required',
+            'vehicleType' => 'required',
+            'id_camera' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+
         $anpr = ANPR::create($datas);
-        return $anpr;
+        if ($anpr) {
+            $client = new Client([
+                'headers' => ['Content-Type' => 'application/json']
+            ]);
+            $client->request('POST', 'http://127.0.0.1:3000/plate_recognition', ['body' => json_encode($anpr)]);
+            return response('Success', 200)->header('Content-Type', 'text/plain');
+        }else{
+            return response('Error Saving on Database', 500)->header('Content-Type', 'text/plain');
+        }
     }
 
     public function show($id)
@@ -58,7 +78,7 @@ class ANPRController extends Controller
 
     public function edit($id)
     {
-        //
+        
     }
 
     public function update(Request $request, $id)
@@ -73,7 +93,7 @@ class ANPRController extends Controller
 
     public function checkFilter($plateNumber)
     {
-        $anpr = Filtering::where('plateNumber', $plateNumber)->firstOrFail();
+        $anpr = Filtering::where('plateNumber', $plateNumber)->first();
         return $anpr;
     }
 
@@ -114,6 +134,15 @@ class ANPRController extends Controller
                         ->orderByDesc("created_at")
                         ->get();
         return $anpr_history;
+    }
+
+    public function sync()
+    {
+        $filtering = Filtering::all();
+        $datas = array(
+            'filtering' => $filtering,
+        );
+        return $datas;
     }
 
 }

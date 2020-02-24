@@ -150,6 +150,7 @@ import { required, minLength, numeric, between, decimal } from 'vuelidate/lib/va
         },
 
         async save(id){
+            this.camera_data.system = 'face_recognition'
             try {
                 if (id) {
                     await this.axios.put(process.env.VUE_APP_IP_SERVER + '/camera', { camera_data : this.camera_data })

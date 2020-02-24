@@ -115,13 +115,21 @@
       <div v-else-if="categories_vision_select == 'ANPR'">
           <v-list dense>
             <v-list-item to="/anpr/data">
-            <v-list-item-action>
-              <v-icon>mdi-database</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Data Record</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item-action>
+                <v-icon>mdi-database</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Data Record</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/anpr/violation">
+              <v-list-item-action>
+                <v-icon>mdi-traffic-light</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Violation</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           <v-list-item to="/anpr/stream">
             <v-list-item-action>
               <v-icon>mdi-wifi</v-icon>

@@ -19,8 +19,10 @@ import FaceFind from "@/pages/face_recognition/FaceFind.vue";
 import ANPRStream from "@/pages/anpr/ANPRStream.vue";
 import ANPRStreamDetail from "@/pages/anpr/ANPRStreamDetail.vue";
 import ANPRCamera from "@/pages/anpr/ANPRCamera.vue";
+import ANPRCameraForm from "@/pages/anpr/ANPRCameraForm.vue";
 import ANPRData from "@/pages/anpr/ANPRData.vue";
 import ANPRFiltering from "@/pages/anpr/ANPRFiltering.vue";
+import ANPRViolation from "@/pages/anpr/ANPRViolation.vue";
 
 const routes = [
   {
@@ -222,12 +224,39 @@ const routes = [
         }
       },
       {
+        path: "anpr/camera/add",
+        name: "ANPR Add Camera",
+        component: ANPRCameraForm,
+        meta: {
+          auth: true,
+          title: 'ANPR Add Camera'
+        }
+      },
+      {
+        path: "anpr/:id/edit",
+        name: "ANPR Edit Camera",
+        component: ANPRCameraForm,
+        meta: {
+          auth: true,
+          title: 'ANPR Edit Camera'
+        }
+      },
+      {
         path: "anpr/filtering",
         name: "ANPR Filtering",
         component: ANPRFiltering,
         meta: {
           auth: true,
           title: 'ANPR Filtering'
+        }
+      },
+      {
+        path: "anpr/violation",
+        name: "ANPR Violation",
+        component: ANPRViolation,
+        meta: {
+          auth: true,
+          title: 'ANPR Violation'
         }
       },
     ]

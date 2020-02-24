@@ -69,7 +69,7 @@
               </v-col>
               <v-col cols="4">
                 <center>
-                  <v-img class="mb-n2" :src="'http://localhost:8001/storage/face_history/' + item.unique_id + '.jpg'"></v-img>
+                  <v-img class="mb-n2" :src="'http://localhost:8001/storage/face_history/' + item.created_at +  '/' + item.unique_id + '.jpg'"></v-img>
                 </center>
               </v-col>
               <p class="overline">{{item.name}} - </p>

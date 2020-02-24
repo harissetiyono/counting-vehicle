@@ -56,25 +56,13 @@
                 </template>
                 <span>Stop Camera</span>
             </v-tooltip>   
-            <!-- <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                    <v-icon
-                        v-on="on"
-                        small
-                        class="mr-2"
-                    >
-                        mdi-map-marker
-                    </v-icon>
-                </template>
-                <span>Maps Location</span>
-            </v-tooltip> -->
             <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                     <v-icon
                         v-on="on"
                         small
                         class="mr-2"
-                        @click="$router.push('/camera/' + item.id + '/edit')"
+                        @click="$router.push('/anpr/' + item.id + '/edit')"
                     >
                         mdi-pencil
                     </v-icon>
@@ -142,11 +130,11 @@
     methods: {
       async initialize () {
           let _self = this
-          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/camera?system=anpr')
+          const { data } = await this.axios.get(process.env.VUE_APP_IP_SERVER + '/cameras/anpr')
           this.cameras = data
 
           data.forEach((element, i) => {
-            this.axios.get(element.ip_local +':' + element.port).then(function(){
+            this.axios.get('http://127.0.0.1:' + element.port).then(function(){
               _self.cameras[i].status = 1
             }).catch(function(error){
                 if (!error.response) {
