@@ -10,7 +10,7 @@
   "dependencies": {
     "@intera/vue-zoom-on-hover": "^1.0.0",
     "apexcharts": "^3.10.1",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "core-js": "^3.3.2",
     "konva": "^4.0.18",
     "moment-timezone": "^0.5.27",
